@@ -1,0 +1,6 @@
+@import "tailwindcss";
+/* Improve code block visibility in dark prose */
+.prose pre code {
+  color: #f1e9ff !important; /* bright readable code color */
+  background: transparent !important; /* keep syntax highlighter bg */
+}
