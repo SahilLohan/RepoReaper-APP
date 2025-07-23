@@ -259,17 +259,26 @@ function HomePage({ defaultWait = 200 }) {
       <Toaster position="top-center" />
 
       {/* Header */}
-      <header className="w-full px-6 py-5 bg-zinc-950 flex items-center justify-between border-b border-zinc-800 shadow">
-        <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-fuchsia-500 text-transparent bg-clip-text">
-          Repo Reaper
-        </h1>
-        <a
-          href="mailto:support@reporeaper.com"
-          className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
-        >
-          Support
-        </a>
-      </header>
+<header className="w-full px-6 py-5 bg-zinc-950 flex items-center justify-between border-b border-zinc-800 shadow">
+  <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-fuchsia-500 text-transparent bg-clip-text">
+    Repo Reaper
+  </h1>
+  <div className="flex gap-6 items-center">
+    <a
+      href="mailto:sahillohan07@gmail.com"
+      className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
+    >
+      video demo
+    </a>
+    <a
+      href="mailto:support@reporeaper.com"
+      className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
+    >
+      Support
+    </a>
+  </div>
+</header>
+
 
       {/* Body */}
       <main className="flex flex-1 flex-col items-center justify-center pb-10">
