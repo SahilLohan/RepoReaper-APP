@@ -120,7 +120,7 @@ function HomePage({ defaultWait = 200 }) {
   }
 
   let attempts = 0;
-  const maxAttempts = 2; // 18 × 5 sec = ~1.5 minutes
+  const maxAttempts = 16; // 18 × 5 sec = ~1.5 minutes
 
   setCheckingBackend(true);
 
