@@ -345,13 +345,7 @@ useEffect(() => {
       href="mailto:sahillohan07@gmail.com"
       className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
     >
-      Connect Developer
-    </a>
-    <a
-      href="mailto:support@reporeaper.com"
-      className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
-    >
-      Support
+      Connect with Sahil
     </a>
   </div>
 </header>
