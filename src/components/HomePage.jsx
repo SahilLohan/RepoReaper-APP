@@ -12,6 +12,33 @@ import remarkGfm from "remark-gfm";
 // Re-usable UI sub-components
 // ---------------------------------------------
 function LanguageChoice({ languages, value, onChange, onNext, locked }) {
+  const [backendReady, setBackendReady] = useState(false);
+const [checkingBackend, setCheckingBackend] = useState(true);
+  useEffect(() => {
+
+    const checkBackend = async () => {
+        try {
+            setCheckingBackend(true);
+
+            const base = import.meta.env.VITE_API_BASE_URL;
+
+            await axios.get(`${base}/health`, {
+                timeout: 5000
+            });
+
+            setBackendReady(true);
+
+        } catch (error) {
+            setBackendReady(false);
+        }
+        finally {
+            setCheckingBackend(false);
+        }
+    };
+
+    checkBackend();
+
+}, []);
   return (
     <div className="w-full flex flex-col items-center mt-8">
       <h2 className="text-lg font-semibold text-zinc-100 mb-4 text-center">
@@ -264,11 +291,20 @@ function HomePage({ defaultWait = 200 }) {
     Repo Reaper
   </h1>
   <div className="flex gap-6 items-center">
+    <div>
+{
+ checkingBackend 
+ ? "🟡 Starting server..."
+ : backendReady
+ ? "🟢 Online"
+ : "🔴 Offline"
+}
+</div>
     <a
       href="mailto:sahillohan07@gmail.com"
       className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
     >
-      Video_Demo
+      Connect Developer
     </a>
     <a
       href="mailto:support@reporeaper.com"
@@ -282,6 +318,28 @@ function HomePage({ defaultWait = 200 }) {
 
       {/* Body */}
       <main className="flex flex-1 flex-col items-center justify-center pb-10">
+        {checkingBackend && (
+  <div className="mt-6 text-center text-zinc-400">
+    <Spinner />
+    <p className="mt-2">
+      Repo Reaper server is starting.
+    </p>
+    <p className="text-sm">
+      This may take up to 60 seconds on first visit.
+    </p>
+  </div>
+)}
+
+{!checkingBackend && !backendReady && (
+  <div className="mt-6 text-center text-red-400">
+    <p>
+      Unable to connect to Repo Reaper server.
+    </p>
+    <button onClick={checkBackend}>
+      Retry
+    </button>
+  </div>
+)}
         {/* Repo Input */}
         <form
           onSubmit={submitRepo}
@@ -294,11 +352,11 @@ function HomePage({ defaultWait = 200 }) {
             value={repo}
             onChange={(e) => setRepo(e.target.value)}
             required
-            disabled={responseType === "language_choice"}
+            disabled={!backendReady || responseType === "language_choice"}
           />
           <button
             type="submit"
-            disabled={responseType === "language_choice"}
+            disabled={!backendReady || responseType === "language_choice"}
             className="ml-0 md:ml-4 h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-fuchsia-500
                        text-white flex items-center justify-center text-2xl hover:scale-105 hover:shadow-lg
                        disabled:opacity-50 transition"
