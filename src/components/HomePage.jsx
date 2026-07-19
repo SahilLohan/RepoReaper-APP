@@ -12,33 +12,7 @@ import remarkGfm from "remark-gfm";
 // Re-usable UI sub-components
 // ---------------------------------------------
 function LanguageChoice({ languages, value, onChange, onNext, locked }) {
-  const [backendReady, setBackendReady] = useState(false);
-const [checkingBackend, setCheckingBackend] = useState(true);
-  useEffect(() => {
 
-    const checkBackend = async () => {
-        try {
-            setCheckingBackend(true);
-
-            const base = import.meta.env.VITE_API_BASE_URL;
-
-            await axios.get(`${base}/health`, {
-                timeout: 5000
-            });
-
-            setBackendReady(true);
-
-        } catch (error) {
-            setBackendReady(false);
-        }
-        finally {
-            setCheckingBackend(false);
-        }
-    };
-
-    checkBackend();
-
-}, []);
   return (
     <div className="w-full flex flex-col items-center mt-8">
       <h2 className="text-lg font-semibold text-zinc-100 mb-4 text-center">
@@ -131,6 +105,72 @@ const markdownContent ="# 🚗 Car Management API Documentation\n\nWelcome to th
 // ---------------------------------------------
 function HomePage({ defaultWait = 200 }) {
   // Core state
+    const [backendReady, setBackendReady] = useState(false);
+  const [checkingBackend, setCheckingBackend] = useState(true);
+  const [backendError, setBackendError] = useState(false);
+  const [startupTimer, setStartupTimer] = useState(90);
+      const checkBackend = async () => {
+        setStartupTimer(90);
+  const base = import.meta.env.VITE_API_BASE_URL;
+
+  if (!base) {
+    console.error("Backend URL missing");
+    setBackendReady(false);
+    return;
+  }
+
+  let attempts = 0;
+  const maxAttempts = 2; // 18 × 5 sec = ~1.5 minutes
+
+  setCheckingBackend(true);
+
+  while (attempts < maxAttempts) {
+    try {
+      const response = await axios.get(`${base}/health`, {
+        timeout: 10000,
+      });
+
+      if (response.data.status === "healthy") {
+        setStartupTimer(90);
+        setBackendReady(true);
+        setCheckingBackend(false);
+        return;
+      }
+
+    } catch (error) {
+      console.log("Backend not ready yet...");
+    }
+
+    attempts++;
+
+    // wait 5 seconds before retry
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  }
+
+setBackendReady(false);
+setCheckingBackend(false);
+setBackendError(true);
+};
+  useEffect(() => {
+    checkBackend();
+
+}, []);
+useEffect(() => {
+  if (!checkingBackend) return;
+
+  const interval = setInterval(() => {
+    setStartupTimer((prev) => {
+      if (prev <= 0) {
+        clearInterval(interval);
+        return 0;
+      }
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(interval);
+
+}, [checkingBackend]);
   const [repo, setRepo] = useState("");
   const [repoName, setRepoName] = useState(""); // returned by /analyze-repo
   const [languages, setLanguages] = useState([]);
@@ -291,7 +331,8 @@ function HomePage({ defaultWait = 200 }) {
     Repo Reaper
   </h1>
   <div className="flex gap-6 items-center">
-    <div>
+    <div
+    className="text-zinc-400 hover:text-fuchsia-400 transition text-sm">
 {
  checkingBackend 
  ? "🟡 Starting server..."
@@ -318,27 +359,83 @@ function HomePage({ defaultWait = 200 }) {
 
       {/* Body */}
       <main className="flex flex-1 flex-col items-center justify-center pb-10">
-        {checkingBackend && (
+{checkingBackend && (
   <div className="mt-6 text-center text-zinc-400">
-    <Spinner />
-    <p className="mt-2">
-      Repo Reaper server is starting.
+    <p className="mt-2 text-lg">
+      🟡 Repo Reaper server is starting...
     </p>
-    <p className="text-sm">
-      This may take up to 60 seconds on first visit.
+
+    <p className="text-sm mt-2">
+      Cold start detected. Please wait.
+    </p>
+
+    <p className="text-fuchsia-400 font-mono text-xl mt-3">
+      {startupTimer}s remaining
+    </p>
+
+    <p className="text-xs text-zinc-500 mt-2">
+      The first request may take up to 90 seconds on free hosting.
     </p>
   </div>
 )}
 
+
 {!checkingBackend && !backendReady && (
-  <div className="mt-6 text-center text-red-400">
-    <p>
-      Unable to connect to Repo Reaper server.
-    </p>
-    <button onClick={checkBackend}>
+<div className="mt-8 max-w-md w-full mx-auto bg-red-950/30 border border-red-500/30 rounded-xl p-6 text-center shadow-lg">
+
+  <div className="text-4xl mb-3">
+    🔴
+  </div>
+
+  <h2 className="text-lg font-semibold text-red-400">
+    Unable to start Repo Reaper server
+  </h2>
+
+  <p className="text-sm text-zinc-400 mt-2">
+    The backend did not respond after 90 seconds.
+    This may happen due to free hosting cold starts.
+  </p>
+
+  <div className="flex justify-center gap-3 mt-5">
+
+    <button
+      onClick={checkBackend}
+      className="
+        px-5 py-2 rounded-lg
+        bg-zinc-800 border border-zinc-700
+        text-zinc-200
+        hover:bg-zinc-700
+        transition
+      "
+    >
       Retry
     </button>
+
+    <a
+      href={`mailto:sahillohan07@gmail.com?subject=Repo Reaper Backend Issue&body=
+Hello Sahil,
+
+I am unable to access Repo Reaper.
+Backend status check failed after 90 seconds.
+
+Browser:
+${navigator.userAgent}
+`}
+      className="
+        px-5 py-2 rounded-lg
+        bg-red-500
+        text-white
+        font-medium
+        hover:bg-red-600
+        transition
+      "
+    >
+      Report Issue
+    </a>
+
   </div>
+
+</div>
 )}
         {/* Repo Input */}
         <form
