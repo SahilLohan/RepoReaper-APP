@@ -130,7 +130,7 @@ function HomePage({ defaultWait = 200 }) {
         timeout: 10000,
       });
 
-      if (response.data.status === "healthy") {
+      if (response.data.status === "ok") {
         setStartupTimer(90);
         setBackendReady(true);
         setCheckingBackend(false);
