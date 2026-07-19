@@ -126,7 +126,7 @@ function HomePage({ defaultWait = 200 }) {
 
   while (attempts < maxAttempts) {
     try {
-      const response = await axios.get(`${base}/health`, {
+      const response = await axios.get(`${base}/`, {
         timeout: 10000,
       });
 
