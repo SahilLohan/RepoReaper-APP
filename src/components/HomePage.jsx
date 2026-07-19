@@ -126,7 +126,7 @@ function HomePage({ defaultWait = 200 }) {
 
   while (attempts < maxAttempts) {
     try {
-      const response = await axios.get(`${base}/`, {
+      const response = await axios.get(`${base}`, {
         timeout: 10000,
       });
 
@@ -327,9 +327,15 @@ useEffect(() => {
 
       {/* Header */}
 <header className="w-full px-6 py-5 bg-zinc-950 flex items-center justify-between border-b border-zinc-800 shadow">
+<div>
   <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-fuchsia-500 text-transparent bg-clip-text">
     Repo Reaper
   </h1>
+
+  <p className="text-xs text-zinc-500 mt-1">
+    AI-powered repository documentation generator
+  </p>
+</div>
   <div className="flex gap-6 items-center">
     <div
     className="text-zinc-400 hover:text-fuchsia-400 transition text-sm">
@@ -337,15 +343,15 @@ useEffect(() => {
  checkingBackend 
  ? "🟡 Starting server..."
  : backendReady
- ? "🟢 Online"
- : "🔴 Offline"
+ ? "🟢 Server Online"
+ : "🔴 Server Offline"
 }
 </div>
     <a
       href="mailto:sahillohan07@gmail.com"
       className="text-zinc-400 hover:text-fuchsia-400 transition text-sm"
     >
-      Connect with Sahil
+      Contact
     </a>
   </div>
 </header>
@@ -431,6 +437,32 @@ ${navigator.userAgent}
 
 </div>
 )}
+
+{/* Hero Section */}
+{backendReady && responseType === "" && !waiting && (
+  <div className="w-full max-w-4xl text-center mb-10 px-4">
+
+    <h2 className="text-4xl md:text-5xl font-extrabold text-zinc-100 leading-tight mt-24">
+      Turn Your Code Into
+      <span className="block mt-2 bg-gradient-to-r from-purple-400 to-fuchsia-500 text-transparent bg-clip-text">
+        Developer Documentation
+      </span>
+    </h2>
+
+    <p className="mt-5 text-lg text-zinc-400 max-w-2xl mx-auto">
+      Repo Reaper uses AI to analyze your GitHub repository and automatically
+      generate clean, structured documentation for your codebase.
+    </p>
+
+
+
+    {/* Small instruction */}
+    <p className="mt-8 text-sm text-zinc-500">
+      Paste a public GitHub repository URL below to get started 🚀
+    </p>
+
+  </div>
+)}
         {/* Repo Input */}
         <form
           onSubmit={submitRepo}
@@ -438,7 +470,7 @@ ${navigator.userAgent}
         >
           <input
             type="text"
-            placeholder="Paste your repository link here"
+            placeholder="e.g. https://github.com/user/project"
             className="flex-1 py-3 px-4 rounded-lg bg-zinc-900 text-zinc-100 placeholder-zinc-500 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 transition"
             value={repo}
             onChange={(e) => setRepo(e.target.value)}
@@ -457,6 +489,67 @@ ${navigator.userAgent}
           </button>
         </form>
 
+{/* Hero Section */}
+{backendReady && responseType === "" && !waiting && (
+  <div className="w-full max-w-4xl text-center mb-10 px-4">
+
+    {/* Features */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+
+      <div className="bg-zinc-800/70 border border-zinc-700 rounded-xl p-5">
+        <div className="text-3xl">
+          🔍
+        </div>
+
+        <h3 className="mt-3 text-zinc-100 font-semibold">
+          Repository Analysis
+        </h3>
+
+        <p className="mt-2 text-sm text-zinc-500">
+          Understands your project structure, files, and programming languages.
+        </p>
+      </div>
+
+
+      <div className="bg-zinc-800/70 border border-zinc-700 rounded-xl p-5">
+
+        <div className="text-3xl">
+          🤖
+        </div>
+
+        <h3 className="mt-3 text-zinc-100 font-semibold">
+          AI Documentation
+        </h3>
+
+        <p className="mt-2 text-sm text-zinc-500">
+          Generates meaningful documentation using AI-powered analysis.
+        </p>
+
+      </div>
+
+
+      <div className="bg-zinc-800/70 border border-zinc-700 rounded-xl p-5">
+
+        <div className="text-3xl">
+          📄
+        </div>
+
+        <h3 className="mt-3 text-zinc-100 font-semibold">
+          Markdown Output
+        </h3>
+
+        <p className="mt-2 text-sm text-zinc-500">
+          Get clean documentation ready for developers and teams.
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+  </div>
+)}
         {/* Language selection */}
         {responseType === "language_choice" && (
           <LanguageChoice
@@ -521,6 +614,44 @@ ${navigator.userAgent}
 
 {/* <MarkdownViewer markdown={markdownContent} /> */}
       </main>
+      {/* Footer */}
+<footer className="w-full mt-16 border-t border-zinc-800 pt-6 pb-8 text-center">
+
+  <p className="text-zinc-400 text-sm">
+    Repo Reaper 🚀
+  </p>
+
+  <p className="text-zinc-500 text-xs mt-1">
+    AI-powered repository documentation generator
+  </p>
+
+  <div className="flex justify-center items-center gap-4 mt-4">
+
+    <a
+      href="https://github.com/SahilLohan/RepoReaper-APP"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-zinc-400 hover:text-white text-sm transition"
+    >
+      ⭐ GitHub
+    </a>
+
+    <span className="text-zinc-700">
+      |
+    </span>
+
+    <a
+      href="https://www.linkedin.com/in/sahil-lohan/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-zinc-400 hover:text-white text-sm transition"
+    >
+      💼 LinkedIn
+    </a>
+
+  </div>
+
+</footer>
     </div>
   );
 }
